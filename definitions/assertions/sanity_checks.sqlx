@@ -10,10 +10,11 @@ schema: "dataform_assertions"
 -- WHERE PARSE_DATE('%Y%m%d', event_date) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL
 
 assert("purchases_last_7_days_non_zero", {
-  query: () => `
+  query: `
     SELECT COUNT(1) AS cnt
     FROM ${ref("silver_purchase_traffic_source_medium")}
     WHERE event_date_parsed BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY)
-                    AND CURRENT_DATE()
+                              AND CURRENT_DATE()
   `
 });
+

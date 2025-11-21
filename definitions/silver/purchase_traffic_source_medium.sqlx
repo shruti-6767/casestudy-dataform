@@ -1,6 +1,6 @@
 config {
 type: "incremental",
-schema: "${defaultDataset}",
+schema: "dataform",
 name: "silver_purchase_traffic_source_medium",
 description: "Cleaned purchases with traffic source medium. Partitioned by event_date. Incremental by event_date.",
 uniqueKey: ["event_date","user_pseudo_id","transaction_id"],

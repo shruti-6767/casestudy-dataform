@@ -1,6 +1,6 @@
 config {
 type: "table",
-schema: "${defaultDataset}",
+schema: "dataform",
 name: "gold_top_traffic_source_medium",
 description: "Monthly KPIs per traffic_source.medium: purchased value USD, total items, avg items per purchase"
 }

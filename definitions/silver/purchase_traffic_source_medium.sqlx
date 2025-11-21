@@ -39,7 +39,7 @@ items,
 traffic_source,
 -- Keep a raw JSON of event_params for debugging (optional)
 (SELECT TO_JSON_STRING(ARRAY(SELECT AS STRUCT * FROM UNNEST(event_params)))) AS event_params_json
-FROM ${ref("bronze_ga4_events")}
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
 WHERE event_name = 'purchase'
 AND (traffic_source.medium IS NULL OR traffic_source.medium != '(data deleted)')
 AND COALESCE(user_pseudo_id, '') != ''

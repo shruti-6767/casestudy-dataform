@@ -7,7 +7,7 @@ description: "Monthly KPIs per traffic_source.medium: purchased value USD, total
 
 
 WITH silver AS (
-SELECT * FROM `deft-landing-478816-i6.dataform.silver_purchase_traffic_source_medium`
+SELECT * FROM ${ref("silver_purchase_traffic_source_medium")}
 ),
 items_resolved AS (
 SELECT

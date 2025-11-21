@@ -5,7 +5,7 @@ name: "silver_purchase_traffic_source_medium",
 description: "Cleaned purchases with traffic source medium. Partitioned by event_date. Incremental by event_date.",
 uniqueKey: ["event_date","user_pseudo_id","transaction_id"],
 bigquery: {
-partitionBy: "DATE(PARSE_DATE('%Y%m%d', event_date))",
+partitionBy: "event_date_parsed",
 clusterBy: ["traffic_source_medium","user_pseudo_id"]
 }
 }
@@ -17,7 +17,7 @@ clusterBy: ["traffic_source_medium","user_pseudo_id"]
 
 
 SELECT
-event_date,
+PARSE_DATE('%Y%m%d', event_date) AS event_date_parsed,
 COALESCE(traffic_source.medium, '(unknown)') AS traffic_source_medium,
 user_pseudo_id,
 -- transaction id may be in ecommerce.transaction_id

@@ -3,7 +3,7 @@ type: "incremental",
 schema: "dataform",
 name: "silver_purchase_traffic_source_medium",
 description: "Cleaned purchases with traffic source medium. Partitioned by event_date. Incremental by event_date.",
-uniqueKey: ["event_date","user_pseudo_id","transaction_id"],
+uniqueKey: ["event_date_parsed","user_pseudo_id","transaction_id"],
 bigquery: {
 partitionBy: "event_date_parsed",
 clusterBy: ["traffic_source_medium","user_pseudo_id"]

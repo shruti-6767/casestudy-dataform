@@ -1,0 +1,47 @@
+config {
+type: "incremental",
+schema: "${defaultDataset}",
+name: "silver_purchase_traffic_source_medium",
+description: "Cleaned purchases with traffic source medium. Partitioned by event_date. Incremental by event_date.",
+uniqueKey: ["event_date","user_pseudo_id","transaction_id"],
+bigquery: {
+partitionBy: "DATE(PARSE_DATE('%Y%m%d', event_date))",
+clusterBy: ["traffic_source_medium","user_pseudo_id"]
+}
+}
+
+
+-- Include helpers (if you created permanent UDFs comment this include out)
+-- If your Dataform supports include templating, you can include helper SQL here. If not, the extraction logic below is self-contained.
+-- SELECT statement for incremental runs.
+
+
+SELECT
+event_date,
+COALESCE(traffic_source.medium, '(unknown)') AS traffic_source_medium,
+user_pseudo_id,
+-- transaction id may be in ecommerce.transaction_id
+IFNULL(ecommerce.transaction_id, CAST((SELECT value.string_value FROM UNNEST(event_params) WHERE key='transaction_id' LIMIT 1) AS STRING)) AS transaction_id,
+-- ga_session_id: try event_params extractor, fall back to NULL
+(SELECT
+CASE
+WHEN value.int_value IS NOT NULL THEN CAST(value.int_value AS INT64)
+WHEN value.string_value IS NOT NULL AND value.string_value != '' THEN CAST(value.string_value AS INT64)
+ELSE NULL
+END
+FROM UNNEST(event_params) WHERE key = 'ga_session_id' LIMIT 1) AS ga_session_id,
+-- If event_value_in_usd is null, fallback to ecommerce.purchase_revenue_in_usd
+COALESCE(event_value_in_usd, ecommerce.purchase_revenue_in_usd, 0.0) AS event_value_in_usd,
+event_timestamp,
+event_bundle_sequence_id,
+SAFE_CAST(ecommerce.total_item_quantity AS INT64) AS total_item_quantity,
+items,
+traffic_source,
+-- Keep a raw JSON of event_params for debugging (optional)
+(SELECT TO_JSON_STRING(ARRAY(SELECT AS STRUCT * FROM UNNEST(event_params)))) AS event_params_json
+FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
+WHERE event_name = 'purchase'
+AND (traffic_source.medium IS NULL OR traffic_source.medium != '(data deleted)')
+AND COALESCE(user_pseudo_id, '') != ''
+
+

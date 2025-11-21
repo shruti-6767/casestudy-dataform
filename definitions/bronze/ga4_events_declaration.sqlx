@@ -1,0 +1,12 @@
+-- Declare the external public dataset
+config {
+type: "declaration",
+name: "bronze_ga4_events",
+description: "Declaration for the public GA4 sample dataset: bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*"
+}
+
+
+SELECT * FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*` LIMIT 0;
+
+
+-- Note: This declaration acts as a marker. Downstream models can read directly from the public dataset.

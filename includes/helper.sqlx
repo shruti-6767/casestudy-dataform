@@ -1,0 +1,56 @@
+-- includes/helpers.sqlx
+-- Helper UDFs: safe extractors for event_params repeated field
+
+
+CREATE OR REPLACE FUNCTION `deft-landing-478816-i6.dataform.safe_extract_event_param_string`(params ARRAY<STRUCT<key STRING, value STRUCT<string_value STRING, int_value INT64, float_value FLOAT64, double_value FLOAT64>>>, key STRING)
+RETURNS STRING
+LANGUAGE js AS r"""
+for (var i=0;i<params.length;i++){
+if(params[i].key === key){
+var v = params[i].value;
+if(v.string_value !== null && v.string_value !== undefined) return v.string_value;
+if(v.int_value !== null && v.int_value !== undefined) return String(v.int_value);
+if(v.float_value !== null && v.float_value !== undefined) return String(v.float_value);
+if(v.double_value !== null && v.double_value !== undefined) return String(v.double_value);
+}
+}
+return null;
+""";
+
+
+CREATE OR REPLACE FUNCTION `deft-landing-478816-i6.dataform.safe_extract_event_param_int`(params ARRAY<STRUCT<key STRING, value STRUCT<string_value STRING, int_value INT64, float_value FLOAT64, double_value FLOAT64>>>, key STRING)
+RETURNS INT64
+LANGUAGE js AS r"""
+for (var i=0;i<params.length;i++){
+if(params[i].key === key){
+var v = params[i].value;
+if(v.int_value !== null && v.int_value !== undefined) return v.int_value;
+if(v.string_value !== null && v.string_value !== undefined){
+var parsed = parseInt(v.string_value);
+return isNaN(parsed) ? null : parsed;
+}
+if(v.float_value !== null && v.float_value !== undefined) return Math.trunc(v.float_value);
+if(v.double_value !== null && v.double_value !== undefined) return Math.trunc(v.double_value);
+}
+}
+return null;
+""";
+
+
+CREATE OR REPLACE FUNCTION `deft-landing-478816-i6.dataform.safe_extract_event_param_float`(params ARRAY<STRUCT<key STRING, value STRUCT<string_value STRING, int_value INT64, float_value FLOAT64, double_value FLOAT64>>>, key STRING)
+RETURNS FLOAT64
+LANGUAGE js AS r"""
+for (var i=0;i<params.length;i++){
+if(params[i].key === key){
+var v = params[i].value;
+if(v.float_value !== null && v.float_value !== undefined) return v.float_value;
+if(v.double_value !== null && v.double_value !== undefined) return v.double_value;
+if(v.int_value !== null && v.int_value !== undefined) return v.int_value;
+if(v.string_value !== null && v.string_value !== undefined){
+var parsed = parseFloat(v.string_value);
+return isNaN(parsed) ? null : parsed;
+}
+}
+}
+return null;
+""";

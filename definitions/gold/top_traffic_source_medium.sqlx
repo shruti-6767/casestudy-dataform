@@ -11,7 +11,7 @@ SELECT * FROM ${ref("silver_purchase_traffic_source_medium")}
 ),
 items_resolved AS (
 SELECT
-event_date,
+event_date_parsed,
 traffic_source_medium,
 event_value_in_usd,
 COALESCE(total_item_quantity,
@@ -22,7 +22,7 @@ FROM silver
 
 
 SELECT
-FORMAT_DATE('%Y-%m', PARSE_DATE('%Y%m%d', event_date)) AS month,
+FORMAT_DATE('%Y-%m', event_date_parsed) AS month,
 traffic_source_medium,
 SUM(IFNULL(event_value_in_usd,0.0)) AS purchased_value_usd,
 SUM(IFNULL(resolved_item_quantity,0)) AS total_items_purchased,

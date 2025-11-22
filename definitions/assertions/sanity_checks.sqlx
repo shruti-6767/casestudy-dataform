@@ -1,21 +1,19 @@
 config {
-schema: "dataform_assertions"
+  // 1. Set the type to 'assertion'
+  type: "assertion",
+  // 2. Give the assertion a unique name
+  name: "purchases_last_7_days_non_zero",
+  // 3. Define the schema where the assertion will be created
+  schema: "dataform_assertions" 
 }
 
-
--- Example: ensure we have purchases in last 7 days
--- assert("purchases_last_7_days_non_zero", {
--- query: () => `
--- SELECT COUNT(1) AS cnt FROM ${ref("silver_purchase_traffic_source_medium")}
--- WHERE PARSE_DATE('%Y%m%d', event_date) BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL
-
-assert(
-  "purchases_last_7_days_non_zero",
-  "SELECT COUNT(1) AS cnt " +
-  "FROM " + ref("silver_purchase_traffic_source_medium") + " " +
-  "WHERE event_date_parsed BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) " +
-  "AND CURRENT_DATE()"
-);
-
-
-
+-- The query below must return 0 rows if the assertion is TRUE (i.e., data is valid).
+-- We select rows only when the purchase count is 0 (the invalid state).
+SELECT
+    COUNT(1) AS cnt
+FROM
+    ${ref("silver_purchase_traffic_source_medium")}
+WHERE
+    event_date_parsed BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND CURRENT_DATE()
+HAVING
+    cnt = 0

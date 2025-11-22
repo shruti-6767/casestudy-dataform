@@ -11,9 +11,6 @@ clusterBy: ["traffic_source_medium","user_pseudo_id"]
 }
 
 
--- Include helpers (if you created permanent UDFs comment this include out)
--- If your Dataform supports include templating, you can include helper SQL here. If not, the extraction logic below is self-contained.
--- SELECT statement for incremental runs.
 
 
 SELECT
@@ -33,12 +30,9 @@ FROM UNNEST(event_params) WHERE key = 'ga_session_id' LIMIT 1) AS ga_session_id,
 -- If event_value_in_usd is null, fallback to ecommerce.purchase_revenue_in_usd
 COALESCE(event_value_in_usd, ecommerce.purchase_revenue_in_usd, 0.0) AS event_value_in_usd,
 event_timestamp,
-event_bundle_sequence_id,
 SAFE_CAST(ecommerce.total_item_quantity AS INT64) AS total_item_quantity,
 items,
-traffic_source,
--- Keep a raw JSON of event_params for debugging (optional)
-(SELECT TO_JSON_STRING(ARRAY(SELECT AS STRUCT * FROM UNNEST(event_params)))) AS event_params_json
+traffic_source
 FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
 WHERE event_name = 'purchase'
 AND (traffic_source.medium IS NULL OR traffic_source.medium != '(data deleted)')

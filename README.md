@@ -69,9 +69,7 @@ Aggregates monthly KPIs per traffic source medium:
 
 <h3>Gold Assertions</h3>
 
-- No negative metrics  
-- No null `traffic_source_medium`  
-- Month must be in `YYYY-MM` format  
+- No negative metrics   
 - Purchase count in **gold** must match count in **silver**  
 
 ---

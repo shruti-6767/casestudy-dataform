@@ -1,6 +1,6 @@
 <h1>GA4 Dataform Pipeline (GCP)</h1>
 
-A clean and scalable **Bronze → Silver → Gold** analytics pipeline built using **Dataform on Google Cloud** on top of the GA4 public e-commerce dataset.
+A clean and scalable **Bronze → Silver → Gold** analytics pipeline built using **Dataform on Google Cloud** on top of the GA4 public e-commerce dataset. In this dataset, Google Analytics 4 generates a new table named events_YYYYMMDD for each calendar day. Every device that triggers an event (such as a page view, purchase, session start, etc.) sends its event data to Google Analytics on the same day the event occurs. Google Analytics then exports that day’s data into a daily partition table.
 
 ---
 

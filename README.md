@@ -60,16 +60,13 @@ Aggregates monthly KPIs per traffic source medium:
 <h3>Silver Assertions</h3>
 
 - `transaction_id` OR `event_value_in_usd` must exist  
-- Unique keys must not duplicate  
 - Purchase count must not be zero in the last 7 days  
-- No `(data deleted)` traffic source  
-- No null `event_date_parsed`  
 
 ---
 
 <h3>Gold Assertions</h3>
 
-- No negative metrics   
+- No negative items or usd values   
 - Purchase count in **gold** must match count in **silver**  
 
 ---

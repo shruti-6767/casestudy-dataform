@@ -1,9 +1,6 @@
 config {
-  // 1. Set the type to 'assertion'
   type: "assertion",
-  // 2. Give the assertion a unique name
   name: "purchases_last_7_days_non_zero",
-  // 3. Define the schema where the assertion will be created
   schema: "dataform_assertions" 
 }
 

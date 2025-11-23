@@ -1,0 +1,13 @@
+config {
+  type: "assertion",
+  name: "silver_valid_transaction",
+  schema: "dataform_assertions"
+}
+
+-- Assertion logic:
+-- This must return 0 records when data is valid.
+-- It returns rows ONLY when BOTH transaction_id AND event_value_in_usd are NULL.
+SELECT *
+FROM ${ref("silver_purchase_traffic_source_medium")}
+WHERE transaction_id IS NULL
+  AND event_value_in_usd IS NULL

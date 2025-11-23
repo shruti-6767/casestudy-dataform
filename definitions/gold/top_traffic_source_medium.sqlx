@@ -1,3 +1,33 @@
+/**
+ * Gold Layer: gold_top_traffic_source_medium
+ *
+ * Purpose:
+ *   Monthly aggregated KPI report showing which traffic_source.medium
+ *   drives the highest purchase value and item volume.
+ *
+ * Data Source:
+ *   - Depends on the Silver table: silver_purchase_traffic_source_medium
+ *   - Silver layer provides cleaned purchase events and resolved item quantities.
+ *
+ * KPIs:
+ *   - purchased_value_usd: Total USD value of purchases per month and medium
+ *   - total_items_purchased: Sum of item quantities
+ *   - avg_items_per_purchase: Average number of items per purchase
+ *   - purchase_count: Total number of purchases
+ *
+ * Business Logic Summary:
+ *   1. Groups purchases by month (YYYY-MM) and traffic_source_medium.
+ *   2. Calculates item quantity using either:
+ *        - total_item_quantity (if populated), or
+ *        - sum of items[] array quantities.
+ *   3. Aggregates purchases at the monthly + medium level.
+ *   4. Ranks results by month (descending) and purchased value.
+ *
+ * Usage:
+ *   - Used by analytics teams for monthly reporting.
+ *   - Helps understand which marketing channels (traffic sources)
+ *     are driving the highest purchase value and volume.
+ */
 config {
 type: "table",
 schema: "dataform",

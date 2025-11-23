@@ -1,0 +1,28 @@
+config {
+  type: "assertion",
+  schema: "dataform_assertions",
+  name: "gold_silver_purchase_count_match"
+}
+
+/**
+ * This assertion checks:
+ * - Total purchases in silver
+ * - Matches the aggregated purchase_count in gold
+ *
+ * If they don't match → aggregation issue or lost data.
+ */
+
+WITH silver_count AS (
+  SELECT COUNT(*) AS cnt
+  FROM ${ref("silver_purchase_traffic_source_medium")}
+),
+gold_count AS (
+  SELECT SUM(purchase_count) AS cnt
+  FROM ${ref("gold_top_traffic_source_medium")}
+)
+
+SELECT
+  silver_count.cnt AS silver_cnt,
+  gold_count.cnt AS gold_cnt
+FROM silver_count, gold_count
+WHERE silver_count.cnt != gold_count.cnt

@@ -1,0 +1,9 @@
+config {
+  type: "assertion",
+  schema: "dataform_assertions",
+  name: "gold_negative_total_items"
+}
+
+SELECT *
+FROM ${ref("gold_top_traffic_source_medium")}
+WHERE total_items_purchased < 0

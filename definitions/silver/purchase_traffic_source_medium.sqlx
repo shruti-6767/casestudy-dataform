@@ -1,3 +1,23 @@
+/*
+ * Silver table: silver_purchase_traffic_source_medium
+ *
+ * - Filters purchase events
+ * - Removes '(data deleted)' traffic sources
+ * - Partitioned  by event_date_parsed
+ * - incrementally load data everyday by matching unique  event_timestamp,user_pseudo_id,transaction_id columns
+ * Columns:
+ * - event_date_parsed: DATE - parsed event_date
+ * - traffic_source_medium: STRING - medium field from GA4 traffic source
+ * - user_pseudo_id: STRING - anonymous user id
+ * - ga_session_id: INT64 - GA4 session id extracted from event_params
+ * - transaction_id: STRING - purchase transaction id
+ * - event_value_in_usd: FLOAT - value of purchase
+ * - event_timestamp : INT64 - event timestamp in EPOCH format
+ * - total_item_quantity : INT64 - total no items purchased
+--below extra columns are kept for adhoc requests and debugging issues
+ * - items : Records Repeated,
+ * - traffic_source : Records Nullable
+ */
 config {
 type: "incremental",
 schema: "dataform",
@@ -10,10 +30,8 @@ clusterBy: ["traffic_source_medium","user_pseudo_id"]
 }
 }
 
-
-
-
 SELECT
+--parsing event_date to date type as we need monthly analytics
 PARSE_DATE('%Y%m%d', event_date) AS event_date_parsed,
 COALESCE(traffic_source.medium, '(unknown)') AS traffic_source_medium,
 user_pseudo_id,
@@ -35,7 +53,7 @@ items,
 traffic_source
 FROM `bigquery-public-data.ga4_obfuscated_sample_ecommerce.events_*`
 WHERE event_name = 'purchase'
-AND (traffic_source.medium IS NULL OR traffic_source.medium != '(data deleted)')
+AND traffic_source.medium != '(data deleted)'
 AND COALESCE(user_pseudo_id, '') != ''
 
 
